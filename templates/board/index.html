@@ -1,0 +1,60 @@
+{% extends '../base.html' %}
+
+{% block css_link %}
+<link href="/assets/css/board.css" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+
+			<div id="board">
+				<form id="search_form" action="/board/search" method="post">
+					{% csrf_token %}
+					<input type="text" id="kwd" name="kwd" value="">
+					<input type="submit" value="찾기">
+				</form>
+				<table class="tbl-ex">
+					<tr>
+						<th>번호</th>
+						<th>제목</th>
+						<th>글쓴이</th>
+						<th>조회수</th>
+						<th>작성일</th>
+						<th>&nbsp;</th>
+					</tr>
+					{% for contents in contenslist %}
+					<tr>
+						<td>{{ contents.no }}</td>
+						{% if contents.depth is 0 %}
+						<td style="text-align:left; padding-left:5px">
+							<a href="/board/views?no={{contents.no}}">
+								{{ contents.title }}
+							</a>
+						</td>
+						{% elif contents.depth is 1 %}
+						<td style="text-align:left; padding-left:10px">
+							<a href="/board/views?no={{ contents.no }}">
+								<img src="../assets/images/reply.png"> {{ contents.title }}
+							</a>
+						</td>
+						{% else %}
+						<td style="text-align:left; padding-left:20px">
+							<a href="/board/views?no={{ contents.no }}" style="text-align:left; padding-left:20px">
+								<img src="../assets/images/reply.png"> {{ contents.title }}
+							</a>
+						</td>
+						{% endif %}
+						<td>{{ contents.name }}</td>
+						<td>{{ contents.hit }}</td>
+						<td>{{ contents.reg_date | date:"Y-m-d h:i:s" }}</td>
+						<td><a href="/board/delete?no={{ contents.no }}" class="del">삭제</a></td>
+					</tr>
+					{% endfor %}
+				</table>
+
+				<div class="bottom">
+					{% if authuser.no != 0 %}
+					<a href="/board/writeform" id="new-book">글쓰기</a>
+					{% endif %}
+				</div>
+			</div>
+{% endblock %}
